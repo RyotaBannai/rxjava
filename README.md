@@ -30,3 +30,5 @@
     - **完了時やエラー時に自動で dispose メソッドが呼ばれない点に注意**
   - これらの disposable を subscribe に渡して、戻り値として取得したい場合は、`subscribeWith` を使う.
   - `CompositeDisposable`: 複数の disposable をまとめることで、CompositeDisposable の dispose を呼ぶことで、保持している全ての Disposable の dispose メソッドを呼ぶことができる.
+  - `Maybe`: 通知するデータが一つだけあ流のかないのか不明なクラス - 消費者は `MaybeObserver`
+  - `Completable`: データを通知せずに、完了だけ通知するクラス - 消費者は `CompletableObserver`
