@@ -43,3 +43,6 @@
 ### 実行スレッド
 - `just` や `from` などのメソッドすでにあるデータから生成される場合はメインスレッド上で動く Flowable/ Observable が生成される
 - `timer` や `interval` メソッドなど時間に関わる処理を行う Flowable/ Observable の場合はメインスレッドとは異なるスレッド上で動く Flowable/ Observable が生成される.
+
+### 
+- オペレータ内で生成される Flowable/ Observable はメソッドによってはそれぞれ異なるスレッド上で処理を行う. そのため、データが受け取った順に通知されることが保証されなくなる.(例 flatMap)
