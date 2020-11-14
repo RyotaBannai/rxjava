@@ -44,5 +44,48 @@
 - `just` や `from` などのメソッドすでにあるデータから生成される場合はメインスレッド上で動く Flowable/ Observable が生成される
 - `timer` や `interval` メソッドなど時間に関わる処理を行う Flowable/ Observable の場合はメインスレッドとは異なるスレッド上で動く Flowable/ Observable が生成される.
 
-### 
+### オペラータで Flowable/ Observable を生成する時のデータの流れる順番に関して 
 - オペレータ内で生成される Flowable/ Observable はメソッドによってはそれぞれ異なるスレッド上で処理を行う. そのため、データが受け取った順に通知されることが保証されなくなる.(例 flatMap)
+
+### エラーハンドリング
+#### 考慮されるべきエラー内容
+- 瞬間的なネットワークエラーなど再実行すれば回複するエラー など
+#### エラーハンドリングの方法
+- 消費者へのエラー通知: onError で受け取る. onError を実装していないと error の stacktrace が出力されるだけで特に何もしないため購読が続行される.
+- 処理の再実行（リトライ）: 処理を最初からやり直す. この場合、消費者にエラーは通知されない.
+- 代替データによる通知
+#### 詳細
+- 通知時の処理中に発生したエラーを通知するのかそのままスローするのかについては、Exceptions クラスの throwIfFatal メソッドで定義されている.(`VirtualMachineError` のようにエラーを通知されても回復不能な場合など.)
+
+### 検査例外/ 非検査例外
+- `(コンパイル時の) 検査例外`: テキストファイルの読み込みや SQL でデータを取得するなどは、`エラーが発生することを想定すべき例外` (例. `IOException`, `FileNotFoundException`, `SQLException` = Throwable と Throwable のすべてのサブクラスのうち、RuntimeException、Error のどちらのサブクラスでもないクラス) [Check Exception](https://docs.oracle.com/javase/jp/8/docs/api/java/lang/Exception.html)
+  - メソッドを呼ぶ側で try-catch を行う場合、メソッドが呼ばれる側に `throws 句`の記述が必要
+  - メソッドが呼ばれる側(= エラーが発生するメソッドの内側)で try-catch を行う場合は、throws句 の記述は不要
+- `非検査例外`: それ以外の例外(クラスでいうと `RuntimeException` クラスとその配下の例外クラスのこと -> 変数が `null` の場合に発生する `NullPointerException` 等)
+![Exception tree](./assets/java-kensa-reigai2.svg)
+#### Exception に関して重要事項
+- `非検査例外`は例外処理の記述(try-catch)がなくてもコンパイルエラーにならない
+- try-catch がない状態で`非検査例外`が発生した場合、`例外は呼び出し元に投げられる`
+- 例外が拾われずに呼び出し元に投げられ続け、`main で終わった場合は落ちる`
+- 例外が処理されず呼び出し元に投げられることを例外の`伝播`という
+- `非チェック例外` (`unchecked exception`)とも呼ばれる
+- Error クラスの配下の例外では、`OutOfMemoryError` 等があり、`回復不能のエラー`と言われる。try-catch は必須ではない
+- Exception クラスとそのクラス配下の例外では、`FileNotFoundException` 等があり、try-catch が必須. 検査例外と呼ばれる
+- メソッドまたはコンストラクタの `throws 節`で非チェック例外を宣言する必要がないのは、それらの例外がそのメソッドまたはコンストラクタの実行によってスローされ、そのメソッドまたはコンストラクタの`境界の外側に伝播する可能性がある場合`である
+#### 主な非検査例外のクラス
+|  Exception Name  |  Description  |
+| ---- | ---- |
+|  NullPointerException  |  null ポインタへのアクセス  |
+|  ArrayIndexOutOfBoundsException  | 配列の添字の不正  |
+|  IllegalArgumentException  |  引数の値のエラー  |
+|  ArithmeticException  |  0 による除算  |
+- [RuntimeException](https://docs.oracle.com/javase/jp/8/docs/api/java/lang/RuntimeException.html)
+#### Throwable
+- throw できるのは Throwable とそのサブクラス. 
+- スロー可能オブジェクト(Throwable)には、原因 (このスロー可能オブジェクトが構築される原因となった別のスロー可能オブジェクト)を含めることもできる。この原因情報の記録は`例外チェーン機能`と呼ばれ、それは`原因自体に原因がある`、といった具合に例外の「チェーン」(各例外がそれぞれ別の例外の原因となる)が形成されるためである.
+- [Throwable オブジェクトに原因を関連付ける方法](https://docs.oracle.com/javase/jp/8/docs/api/java/lang/Throwable.html)
+#### いつ throws 句を使うか
+- 検査例外の場合
+- 呼び出し側に不正があることを明示したいときは throws 句を使って、そのメソッドを呼び出したメソッドに例外を投げる(try-catch の捕捉を移譲) 
+- 呼び出される側（メソッドを呼ぶ側の操作となんら関係ない処理で Exception が発生してしまう場合）に不正がある場合は、その中で try-catch で適切に捕捉させる.
+- 意図的にどの部分で Exception が発生しているのかを分けると可読性が高まる. [throwsを用いるかどうかはメソッドの役割で決まる](https://www.atmarkit.co.jp/ait/articles/0611/22/news144.html)
