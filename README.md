@@ -1,4 +1,7 @@
 # rxjava
+### Basics
+- `Subscribe/ Observer` を使用する場合、`onCompleted`が呼ばれた際に、購読解除がされるため、unsubscribe を呼ばなくても良い.
+- Disposanble の dispose メソッドを読んでも外部から購読解除が可能.
 ### Cold/ Hot producers
 - `Cold`: `データのタイムライン`を Subscribe する時ごとに必ず生成する = データストリームには常に一つのサブスクライバー
 - `Hot`: `データのタイムライン`は全体で一つで、消費者は同じタイムラインに参加することで、データを受け取る(別々の消費者が同時に Subscribe できる) = 過ぎてしまったデータは取得できない.
