@@ -2,10 +2,13 @@
 ### Basics
 - `Subscribe/ Observer` を使用する場合、`onCompleted`が呼ばれた際に、購読解除がされるため、unsubscribe を呼ばなくても良い.
 - Disposanble の dispose メソッドを読んでも外部から購読解除が可能.
+#### SubscribeOn vs ObserveOn
+- SubscribeOn 通知を行う側（生産者）が処理を行うスレッドを指定.
+- ObserveOn 通知を受ける側（消費者）が処理を行うスレッドを指定.
+- [ref](https://qiita.com/hatt0519/items/c8875f822b752a188956)
 ### Cold/ Hot producers
 - `Cold`: `データのタイムライン`を Subscribe する時ごとに必ず生成する = データストリームには常に一つのサブスクライバー
 - `Hot`: `データのタイムライン`は全体で一つで、消費者は同じタイムラインに参加することで、データを受け取る(別々の消費者が同時に Subscribe できる) = 過ぎてしまったデータは取得できない.
-
 #### `Cold` -> `Hot` 変換
 - `ConnectableFlowable` `ConnectableObservable`を使う.
 - `refCount`: `ConnectableFlowable` `ConnectableObservable` を `Flowlable`, `Observable`に変換する. 変換する際に, 他の消費者に購読されている限りは途中から購読されても同じタイムライン情で生成されるデータを返す.(つまり, Hot な振る舞いをする)
