@@ -75,8 +75,8 @@
 - 例外が拾われずに呼び出し元に投げられ続け、`main で終わった場合は落ちる`
 - 例外が処理されず呼び出し元に投げられることを例外の`伝播`という
 - `非チェック例外` (`unchecked exception`)とも呼ばれる
-- Error クラスの配下の例外では、`OutOfMemoryError` 等があり、`回復不能のエラー`と言われる。try-catch は必須ではない
-- Exception クラスとそのクラス配下の例外では、`FileNotFoundException` 等があり、try-catch が必須. 検査例外と呼ばれる
+- Error クラスの配下の例外では、`OutOfMemoryError` 等があり、`回復不能のエラー`と言われる。**try-catch は必須ではない**
+- **Exception クラスとそのクラス配下の例外**では、`FileNotFoundException` 等があり、try-catch が必須. `検査例外`と呼ばれる
 - メソッドまたはコンストラクタの `throws 節`で非チェック例外を宣言する必要がないのは、それらの例外がそのメソッドまたはコンストラクタの実行によってスローされ、そのメソッドまたはコンストラクタの`境界の外側に伝播する可能性がある場合`である
 #### 主な非検査例外のクラス
 |  Exception Name  |  Description  |
