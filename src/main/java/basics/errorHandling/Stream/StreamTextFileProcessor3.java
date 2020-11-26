@@ -18,12 +18,14 @@ public class StreamTextFileProcessor3 implements TextFileProcessor {
     }
 
     public void process(String directoryPath) throws IOException, MyException {
-        try (Stream<Path> paths = Files.walk(Paths.get(directoryPath), 2)) {
-            paths.filter(getTextFile) // ファイルひとつずつ処理
-                    .flatMap(file -> ConsumerWrapper.wrapConsumer(Files.lines(file)))
-                    .flatMap(line -> Stream.of(line.split("\\s")))
-                    .forEach(wrapConsumer(this::analyze));
-        }
+
+        // TODO: Come back this implementation later.
+//        try (Stream<Path> paths = Files.walk(Paths.get(directoryPath), 2)) {
+//            paths.filter(getTextFile) // ファイルひとつずつ処理
+//                    .flatMap(file -> ConsumerWrapper.wrapConsumer(Files.lines(file)))
+//                    .flatMap(line -> Stream.of(line.split("\\s")))
+//                    .forEach(wrapConsumer(this::analyze));
+//        }
     }
 
     private static final Predicate<Path> getTextFile =
