@@ -1,8 +1,6 @@
-package basics.errorHandling.types;
+package basics.errorHandling.checked;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class Exmple1 {
