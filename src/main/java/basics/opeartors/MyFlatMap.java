@@ -6,7 +6,24 @@ import java.util.concurrent.TimeUnit;
 
 public class MyFlatMap {
     public static void main(String[] args) {
-        testFlatMap();
+//        testFlatMap();
+        combiner();
+    }
+
+    private static void combiner() {
+        System.out.println("called");
+        Flowable<String> flowable = Flowable.range(2, 2) // 2,3 が一気に入って、それぞれに対して、一回の combiner が適用される.
+//                .doOnNext(System.out::println)
+                .flatMap(
+                        data -> Flowable.interval(100L, TimeUnit.MILLISECONDS).take(3),
+                        (sourceData, newData) -> "[" + sourceData + "] " + newData);
+
+        flowable.subscribe(new DebugSubscriber<>("test"));
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void testFlatMap() {
