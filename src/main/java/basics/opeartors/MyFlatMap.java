@@ -7,11 +7,20 @@ import java.util.concurrent.TimeUnit;
 public class MyFlatMap {
     public static void main(String[] args) {
 //        testFlatMap();
-        combiner();
+//        combiner();
+        converter();
+    }
+
+    private static void converter() {
+        Flowable<Integer> originalFlowable = Flowable.just(1, 3, 0, 2, 5).map(number -> 10 / number);
+        Flowable<Integer> flowable = originalFlowable.flatMap(
+                Flowable::just,
+                error -> Flowable.just(-1), // error 時には exception を返すのではなく -1 を返して全体の処理を終了する
+                () -> Flowable.just(100));
+        flowable.subscribe(new DebugSubscriber<>("Converter test."));
     }
 
     private static void combiner() {
-        System.out.println("called");
         Flowable<String> flowable = Flowable.range(2, 2) // 2,3 が一気に入って、それぞれに対して、一回の combiner が適用される.
 //                .doOnNext(System.out::println)
                 .flatMap(
