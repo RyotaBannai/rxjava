@@ -8,15 +8,15 @@ public class MyFlatMap {
     public static void main(String[] args) {
 //        testFlatMap();
 //        combiner();
-        converter();
+        mapper();
     }
 
-    private static void converter() {
+    private static void mapper() {
         Flowable<Integer> originalFlowable = Flowable.just(1, 3, 0, 2, 5).map(number -> 10 / number);
         Flowable<Integer> flowable = originalFlowable.flatMap(
-                Flowable::just,
-                error -> Flowable.just(-1), // error 時には exception を返すのではなく -1 を返して全体の処理を終了する
-                () -> Flowable.just(100));
+                Flowable::just, // onNextMapper
+                error -> Flowable.just(-1), // onErrorMapper : error 時には exception を返すのではなく -1 を返して全体の処理を終了する
+                () -> Flowable.just(100)); // onCompleteSupplier
         flowable.subscribe(new DebugSubscriber<>("Converter test."));
     }
 
