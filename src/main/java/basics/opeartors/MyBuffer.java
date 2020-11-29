@@ -1,10 +1,8 @@
 package basics.opeartors;
 
-import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -13,6 +11,7 @@ public class MyBuffer {
         testOpeningAndClosingIndicators();
     }
 
+    // reference so far https://juejin.cn/post/6844903984189145102
     // implementation in progress...
     private static void testOpeningAndClosingIndicators() {
         ObservableSource<Long> openingIndicator = Observable.interval(3, TimeUnit.SECONDS);
